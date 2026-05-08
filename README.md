@@ -2,18 +2,22 @@
 
 A simple, modern, and powerful Task Management System built with Flask, PostgreSQL, Pandas, and WebSockets.
 
-## Features
-- **Authentication**: Secure user registration and login.
-- **REST APIs**: Full CRUD operations for task management.
-- **Analytics Dashboard**: Real-time insights using Pandas & NumPy.
-- **Live Updates**: Instant task notifications via WebSockets.
-- **Premium UI**: Responsive, glassmorphism-inspired design.
+## Key Features
+- **Authentication**: Secure user registration and session-based login.
+- **REST APIs**: Complete CRUD lifecycle for tasks with robust error handling.
+- **Interactive Analytics**: Real-time **Chart.js** integration for visual task distribution.
+- **Pandas & NumPy Engine**: Backend analytics service for calculating task metrics.
+- **Real-Time WebSockets**: Instant UI synchronization across tabs using **Socket.IO**.
+- **Smart Filters & Search**: Multi-criteria filtering (Priority, Status) and instant search.
+- **Visual Progress Tracking**: Global progress bar tracking overall completion rate.
+- **Premium UI/UX**: Modern Glassmorphism design with a **Dark/Light Mode** toggle.
+- **Deadline Management**: Support for task due dates and time-sensitive tracking.
 
 ## Tech Stack
 - **Backend**: Python, Flask, Flask-SQLAlchemy, Flask-SocketIO
 - **Database**: PostgreSQL
 - **Analytics**: Pandas, NumPy
-- **Frontend**: HTML5, Vanilla CSS, JavaScript (Socket.IO)
+- **Frontend**: HTML5, Vanilla CSS, JavaScript, Chart.js
 
 ## Setup Instructions
 
@@ -44,14 +48,14 @@ psql -U username -d task_db -f schema.sql
 ```bash
 python app.py
 ```
-The app will be available at `http://localhost:5000`.
+The app will be available at `http://localhost:5001`.
 
 ## API Endpoints
 - `GET /api/tasks`: Fetch all tasks for the logged-in user.
-- `POST /api/tasks`: Create a new task.
-- `PUT /api/tasks/<id>`: Update a task's status or details.
+- `POST /api/tasks`: Create a new task (supports `title`, `description`, `priority`, `due_date`).
+- `PUT /api/tasks/<id>`: Update task details or status.
 - `DELETE /api/tasks/<id>`: Remove a task.
-- `GET /api/analytics`: Fetch task statistics.
+- `GET /api/analytics`: Fetch task statistics (processed via Pandas).
 
 ## Project Structure
 - `app.py`: Application entry point and WebSocket setup.
