@@ -1,0 +1,10 @@
+flask
+flask-sqlalchemy
+psycopg2-binary
+flask-login
+pandas
+numpy
+flask-socketio
+eventlet
+python-dotenv
+flask-cors
