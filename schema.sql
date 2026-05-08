@@ -19,6 +19,7 @@ CREATE TABLE tasks (
     priority VARCHAR(20) DEFAULT 'Medium',
     status VARCHAR(20) DEFAULT 'Pending',
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT (now() AT TIME ZONE 'utc'),
+    due_date DATE,
     user_id INTEGER NOT NULL,
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
