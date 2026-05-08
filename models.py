@@ -29,6 +29,7 @@ class Task(db.Model):
     priority = db.Column(db.String(20), default='Medium') # Options: Low, Medium, High
     status = db.Column(db.String(20), default='Pending')   # Options: Pending, Completed
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    due_date = db.Column(db.Date, nullable=True)
     
     # Foreign Key linking to the User who owns the task
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
@@ -42,5 +43,6 @@ class Task(db.Model):
             'priority': self.priority,
             'status': self.status,
             'created_at': self.created_at.isoformat(),
+            'due_date': self.due_date.isoformat() if self.due_date else None,
             'user_id': self.user_id
         }

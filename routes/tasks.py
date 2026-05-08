@@ -38,10 +38,15 @@ def add_task():
         return jsonify({'error': 'Title is required'}), 400
         
     try:
+        due_date = None
+        if data.get('due_date'):
+            due_date = datetime.strptime(data.get('due_date'), '%Y-%m-%d').date()
+
         new_task = Task(
             title=data.get('title'),
             description=data.get('description'),
             priority=data.get('priority', 'Medium'),
+            due_date=due_date,
             status='Pending',
             user_id=current_user.id
         )
@@ -81,6 +86,12 @@ def update_task(task_id):
         task.description = data.get('description', task.description)
         task.priority = data.get('priority', task.priority)
         task.status = data.get('status', task.status)
+        
+        if 'due_date' in data:
+            if data['due_date']:
+                task.due_date = datetime.strptime(data['due_date'], '%Y-%m-%d').date()
+            else:
+                task.due_date = None
         
         db.session.commit()
         

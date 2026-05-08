@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,11 +7,18 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <nav class="glass" style="border-radius: 0; margin-bottom: 2rem;">
+    <!-- Top Progress Bar -->
+    <div class="progress-container">
+        <div class="progress-bar" id="global-progress"></div>
+    </div>
+
+    <nav class="glass" style="border-radius: 0; margin-bottom: 1rem;">
         <div class="logo">TaskMaster</div>
         <div style="display: flex; align-items: center; gap: 1.5rem;">
+            <button onclick="toggleTheme()" id="theme-toggle" style="background: transparent; font-size: 1.2rem; padding: 0.5rem;">🌓</button>
             <span>Welcome, {{ current_user.username }}</span>
             <a href="{{ url_for('auth.logout') }}" style="color: var(--danger); text-decoration: none; font-weight: 600;">Logout</a>
         </div>
@@ -19,29 +26,44 @@
 
     <div class="container">
         <!-- Analytics Section -->
-        <div class="analytics-grid" id="analytics-container">
-            <div class="glass stat-card">
-                <div class="stat-value" id="total-tasks">0</div>
-                <div class="stat-label">Total Tasks</div>
+        <div class="dashboard-header">
+            <div class="analytics-grid" id="analytics-container" style="flex: 2;">
+                <div class="glass stat-card">
+                    <div class="stat-value" id="total-tasks">0</div>
+                    <div class="stat-label">Total</div>
+                </div>
+                <div class="glass stat-card">
+                    <div class="stat-value" id="completed-tasks" style="color: var(--success);">0</div>
+                    <div class="stat-label">Done</div>
+                </div>
+                <div class="glass stat-card">
+                    <div class="stat-value" id="completion-rate">0%</div>
+                    <div class="stat-label">Rate</div>
+                </div>
             </div>
-            <div class="glass stat-card">
-                <div class="stat-value" id="completed-tasks" style="color: var(--success);">0</div>
-                <div class="stat-label">Completed</div>
-            </div>
-            <div class="glass stat-card">
-                <div class="stat-value" id="pending-tasks" style="color: var(--pending);">0</div>
-                <div class="stat-label">Pending</div>
-            </div>
-            <div class="glass stat-card">
-                <div class="stat-value" id="completion-rate">0%</div>
-                <div class="stat-label">Completion</div>
+            <!-- Chart Section -->
+            <div class="glass stat-card" style="flex: 1; min-height: 200px; display: flex; align-items: center; justify-content: center; padding: 1rem;">
+                <canvas id="taskChart"></canvas>
             </div>
         </div>
 
         <!-- Task Controls -->
         <div class="task-controls">
-            <h2>Your Tasks</h2>
-            <button onclick="openModal()">+ Add New Task</button>
+            <div class="filters-group">
+                <input type="text" id="searchInput" placeholder="Search tasks..." oninput="filterTasks()">
+                <select id="filterPriority" onchange="filterTasks()">
+                    <option value="All">All Priorities</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                </select>
+                <select id="filterStatus" onchange="filterTasks()">
+                    <option value="All">All Status</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Completed">Completed</option>
+                </select>
+            </div>
+            <button onclick="openModal()">+ Add Task</button>
         </div>
 
         <!-- Task Grid -->
@@ -61,15 +83,21 @@
                 </div>
                 <div class="form-group">
                     <label>Description</label>
-                    <textarea id="taskDesc" rows="3" placeholder="Add more details..."></textarea>
+                    <textarea id="taskDesc" rows="2" placeholder="Add more details..."></textarea>
                 </div>
-                <div class="form-group">
-                    <label>Priority</label>
-                    <select id="taskPriority">
-                        <option value="Low">Low</option>
-                        <option value="Medium" selected>Medium</option>
-                        <option value="High">High</option>
-                    </select>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>Priority</label>
+                        <select id="taskPriority">
+                            <option value="Low">Low</option>
+                            <option value="Medium" selected>Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Due Date</label>
+                        <input type="date" id="taskDueDate">
+                    </div>
                 </div>
                 <div style="display: flex; gap: 1rem; margin-top: 2rem;">
                     <button type="submit" style="flex: 1;">Create Task</button>
